@@ -1,0 +1,78 @@
+syntax = "proto3";
+
+import "google/api/annotations.proto";
+// import "protoc-gen-swagger/options/annotations.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+import "google/protobuf/empty.proto";
+// import "google/protobuf/timestamp.proto";
+
+// option java_multiple_files = true;
+// option java_package = "com.getitqec.Userproto";
+// option java_outer_classname = "AuthenticationService";
+
+option go_package = ".;serviceproto";
+// option (version) = "1.0.0";
+
+package serviceproto;
+
+option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
+	info: {
+		title: "User service";
+		version: "1.0";
+		contact: {
+			name: "user service";
+			url: "https://imagechat.getitqec.com";
+			email: "wx.chee@getiqec.com";
+        };
+    };
+    schemes: HTTPS;
+    consumes: "application/json";
+    produces: "application/json";
+    // responses: {
+	// 	key: "404";
+	// 	value: {
+	// 		description: "Returned when the resource does not exist.";
+	// 		schema: {
+	// 			json_schema: {
+	// 				type: STRING;
+	// 			}
+	// 		}
+	// 	}
+	// }
+};
+
+
+service UserService {
+  // reuqest response
+  rpc signIn (SignInRequest) returns (SignInReponse) {
+    option (google.api.http) = {
+      post: "/api/user/signin"
+      body: "*"
+    };
+}
+
+  rpc getUser (User) returns (User) {
+    option (google.api.http) = {
+      get: "/api/user/user/{id}"
+    };
+  }
+}
+
+message SignInRequest {
+  string idToken = 1;
+  string accessToken = 2;
+}
+
+message SignInReponse {
+  bool exist = 1;
+  User user = 2;
+}
+
+message Acknowledgement { string acknowledgement = 1; }
+
+message User {
+  string id = 1;
+  string name = 2;
+  string email = 3;
+  string img = 4;
+}
