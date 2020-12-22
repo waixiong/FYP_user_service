@@ -12,6 +12,7 @@ type IUserDAO interface {
 	Create(ctx context.Context, user *dto.User) error
 	Get(ctx context.Context, id string) (*dto.User, error)
 	Update(ctx context.Context, user *dto.User) error
+	GetByEmail(ctx context.Context, id string) (*dto.User, error)
 }
 
 // IPortfolioDAO APIs

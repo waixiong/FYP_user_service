@@ -4,6 +4,7 @@ import (
 	"context"
 
 	pb "getitqec.com/server/user/pkg/api/v1"
+	"getitqec.com/server/user/pkg/commons"
 	"getitqec.com/server/user/pkg/model"
 	// "github.com/golang/protobuf/ptypes/empty"
 	//pb "./proto"
@@ -57,10 +58,43 @@ func (s *Server) GetUser(ctx context.Context, req *pb.User) (*pb.User, error) {
 	if err != nil {
 		return nil, err
 	}
+	token, err := commons.VerifyGoogleAccessToken(ctx)
+	if err == nil && token.UserId == user.UserId {
+		return &pb.User{
+			Id:    user.UserId,
+			Email: user.Email,
+			Name:  user.UserName,
+			Img:   user.Img,
+		}, nil
+	}
 	return &pb.User{
 		Id:    user.UserId,
-		Email: user.Email,
+		Email: "",
 		Name:  user.UserName,
+		Img:   user.Img,
+	}, nil
+}
+
+func (s *Server) SearchUser(ctx context.Context, req *pb.User) (*pb.User, error) {
+	// TODO: check authorization (no need for hackathon)
+	user, err := s.model.SearchUser(ctx, req.Email)
+	if err != nil {
+		return nil, err
+	}
+	token, err := commons.VerifyGoogleAccessToken(ctx)
+	if err == nil && token.UserId == user.UserId {
+		return &pb.User{
+			Id:    user.UserId,
+			Email: user.Email,
+			Name:  user.UserName,
+			Img:   user.Img,
+		}, nil
+	}
+	return &pb.User{
+		Id:    user.UserId,
+		Email: "",
+		Name:  user.UserName,
+		Img:   user.Img,
 	}, nil
 }
 

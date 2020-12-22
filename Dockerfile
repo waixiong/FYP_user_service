@@ -24,6 +24,6 @@ EXPOSE 8090
 EXPOSE 8091
 
 COPY configs /configs/
-# COPY .env .
+COPY .env .
 
 CMD ["/cmd/server"]

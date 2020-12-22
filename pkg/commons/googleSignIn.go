@@ -104,6 +104,9 @@ func VerifyGoogleAccessToken(ctx context.Context) (*googleOauth2.Tokeninfo, erro
 		return nil, ErrMissingMetadata
 	}
 	accessTokens := md.Get("Authorization")
+	if len(accessTokens) != 1 {
+		return nil, ErrInvalidToken
+	}
 	fmt.Println(accessTokens)
 
 	oauth2Service, err := googleOauth2.New(httpClient)

@@ -56,6 +56,12 @@ service UserService {
       get: "/api/user/user/{id}"
     };
   }
+
+  rpc searchUser (User) returns (User) {
+    option (google.api.http) = {
+      get: "/api/user/search/{email}"
+    };
+  }
 }
 
 message SignInRequest {

@@ -61,6 +61,21 @@ func (v *UserDAO) Get(ctx context.Context, id string) (*dto.User, error) {
 	return user, err
 }
 
+func (v *UserDAO) GetByEmail(ctx context.Context, email string) (*dto.User, error) {
+	// data, err := v.db.Get("User", "_id", id)
+	// if err != nil {
+	// 	return nil, err
+	// }
+	// return dto.AttributeMapToUser(data)
+	result := v.mongodb.Read(ctx, commons.UserDatabase, commons.UserColection, bson.D{{Key: "email", Value: email}})
+	if result.Err() != nil {
+		return nil, result.Err()
+	}
+	user := &dto.User{}
+	err := result.Decode(user)
+	return user, err
+}
+
 func (v *UserDAO) Update(ctx context.Context, user *dto.User) error {
 	return v.mongodb.Update(ctx, commons.UserDatabase, commons.UserColection, bson.D{{Key: "_id", Value: user.UserId}}, bson.D{{"$set", user}})
 }

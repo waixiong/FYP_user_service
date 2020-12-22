@@ -20,6 +20,7 @@ type UserServiceClient interface {
 	// reuqest response
 	SignIn(ctx context.Context, in *SignInRequest, opts ...grpc.CallOption) (*SignInReponse, error)
 	GetUser(ctx context.Context, in *User, opts ...grpc.CallOption) (*User, error)
+	SearchUser(ctx context.Context, in *User, opts ...grpc.CallOption) (*User, error)
 }
 
 type userServiceClient struct {
@@ -48,6 +49,15 @@ func (c *userServiceClient) GetUser(ctx context.Context, in *User, opts ...grpc.
 	return out, nil
 }
 
+func (c *userServiceClient) SearchUser(ctx context.Context, in *User, opts ...grpc.CallOption) (*User, error) {
+	out := new(User)
+	err := c.cc.Invoke(ctx, "/serviceproto.UserService/searchUser", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserServiceServer is the server API for UserService service.
 // All implementations must embed UnimplementedUserServiceServer
 // for forward compatibility
@@ -55,6 +65,7 @@ type UserServiceServer interface {
 	// reuqest response
 	SignIn(context.Context, *SignInRequest) (*SignInReponse, error)
 	GetUser(context.Context, *User) (*User, error)
+	SearchUser(context.Context, *User) (*User, error)
 	mustEmbedUnimplementedUserServiceServer()
 }
 
@@ -67,6 +78,9 @@ func (UnimplementedUserServiceServer) SignIn(context.Context, *SignInRequest) (*
 }
 func (UnimplementedUserServiceServer) GetUser(context.Context, *User) (*User, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUser not implemented")
+}
+func (UnimplementedUserServiceServer) SearchUser(context.Context, *User) (*User, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SearchUser not implemented")
 }
 func (UnimplementedUserServiceServer) mustEmbedUnimplementedUserServiceServer() {}
 
@@ -117,6 +131,24 @@ func _UserService_GetUser_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UserService_SearchUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(User)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).SearchUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/serviceproto.UserService/searchUser",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).SearchUser(ctx, req.(*User))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _UserService_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "serviceproto.UserService",
 	HandlerType: (*UserServiceServer)(nil),
@@ -128,6 +160,10 @@ var _UserService_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "getUser",
 			Handler:    _UserService_GetUser_Handler,
+		},
+		{
+			MethodName: "searchUser",
+			Handler:    _UserService_SearchUser_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

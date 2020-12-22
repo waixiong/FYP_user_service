@@ -13,6 +13,8 @@ type UserModelI interface {
 
 	// User
 	GetUser(ctx context.Context, id string) (*dto.User, error)
+
+	SearchUser(ctx context.Context, email string) (*dto.User, error)
 }
 
 // PortfolioModelI APIs
